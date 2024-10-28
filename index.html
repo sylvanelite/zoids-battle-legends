@@ -32,7 +32,7 @@
         window.location.reload();//very heavyweight way of doing this... 
     }
     document.getElementById('selModel').value = selection;
-	const fileName=`../dat/${selection}.dat`;//URL relative to the importer file
+	const fileName=`./dat/${selection}.dat`;//URL relative to the importer file
 	const obj = await init(fileName);
     
     //at this point parsing is done, rest is rendering via THREE.js
