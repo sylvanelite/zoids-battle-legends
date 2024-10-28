@@ -19,7 +19,7 @@
     import {TrackballControls} from "three/addons/controls/TrackballControls.js";
 
     //local
-    import {init} from "./build/src/loader.mjs";
+    import {init} from "./dist/src/loader.mjs";
     let selection = document.getElementById('selModel').value;
     if(window.location.hash){//load selection as URL fragment
         selection = window.location.hash.substring(1);
@@ -168,7 +168,7 @@
     <div id="container"></div>
     <br/>
     <span style="font-family:sans-serif;font-size:12pt;">This project is for educational purposes only. <br/>
-        Code and related output is open sourced as: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></span>
+        Code and related output is source available as: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></span>
     <br/>
     <br/>
 </body>
