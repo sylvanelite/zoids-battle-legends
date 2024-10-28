@@ -19,7 +19,7 @@
     import {TrackballControls} from "three/addons/controls/TrackballControls.js";
 
     //local
-    import {init} from "./dist/src/loader.mjs";
+    import {init} from "./build/src/loader.mjs";
     let selection = document.getElementById('selModel').value;
     if(window.location.hash){//load selection as URL fragment
         selection = window.location.hash.substring(1);
@@ -32,7 +32,7 @@
         window.location.reload();//very heavyweight way of doing this... 
     }
     document.getElementById('selModel').value = selection;
-	const fileName=`./dat/${selection}.dat`;//URL relative to the importer file
+	const fileName=`../dat/${selection}.dat`;//URL relative to the importer file
 	const obj = await init(fileName);
     
     //at this point parsing is done, rest is rendering via THREE.js
