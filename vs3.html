@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Demo</title>
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/"
+          }
+        }
+      </script>
+
+<script type="module">
+    
+    //load from CDN    
+    import * as THREE from 'three';
+    import {OBJLoader} from "three/addons/loaders/OBJLoader.js";
+    import {TrackballControls} from "three/addons/controls/TrackballControls.js";
+
+    //local
+    import {init} from "./build/src/loader.mjs";
+    let selection = document.getElementById('selModel').value;
+    if(window.location.hash){//load selection as URL fragment
+        selection = window.location.hash.substring(1);
+        document.getElementById('selModel').value;
+    }else{
+        selection = 'b07';//default: fury
+    }
+    document.getElementById('selModel').onchange = ()=>{
+        window.location.hash=document.getElementById('selModel').value;
+        window.location.reload();//very heavyweight way of doing this... 
+    }
+    document.getElementById('selModel').value = selection;
+	const fileName=`../dat/vs3/zoid/${selection}.dat`;//URL relative to the importer file
+	const obj = await init(fileName);
+    
+    //at this point parsing is done, rest is rendering via THREE.js
+    //set up three.js for rendering
+    let xMin = 999999, yMin = 999999, zMin = 999999;
+    let xMax = -999999, yMax = -999999, zMax = -999999;
+
+    const dataLines = obj.split('\n');
+    //get vertex extents from obj file, try and keep the model in the middle of the view
+    for (const line of dataLines) {
+        if (line[0] != 'v') {continue;}
+        const vertexData = line.split(' ');
+        xMin = Math.min(xMin, Number(vertexData[1]));
+        xMax = Math.max(xMax, Number(vertexData[1]));
+        yMin = Math.min(yMin, Number(vertexData[2]));
+        yMax = Math.max(yMax, Number(vertexData[2]));
+        zMin = Math.min(zMin, Number(vertexData[3]));
+        zMax = Math.max(zMax, Number(vertexData[3]));
+    }
+    const camera = new THREE.PerspectiveCamera();
+    camera.position.z = -zMax*3;//place camera away based on size of model
+    const scene = new THREE.Scene();
+
+    const intensity = (zMax-zMin)*2
+    const light = new THREE.PointLight(0xefefef, intensity);
+    camera.add(light);
+    scene.add(camera);
+    const loader = new OBJLoader();//file is converted to .obj data as text
+    const mesh = loader.parse(obj).children[0];//obj should only have 1 model
+    mesh.geometry.translate(-(xMin + xMax) / 2, -(yMin + yMax) / 2, -(zMin + zMax) / 2);
+    mesh.geometry.rotateY(Math.PI+Math.PI/4);//facing a bit to the right
+    mesh.material.side = THREE.DoubleSide;
+    scene.add(mesh);
+    //finally, attach renderer to screen and draw
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(512, 512);
+    document.getElementById('container').appendChild(renderer.domElement);
+    const controls = new TrackballControls(camera, renderer.domElement);
+    const animate = ()=> {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+    
+    //display option, add query string ?dl=1 to show the dl button
+    const queryParams = new URLSearchParams(window.location.search);
+    if(queryParams.get("dl")){
+        document.getElementById('iptDownloadFile').style.display = '';
+        document.getElementById('iptDownloadFile').onclick = ()=>{
+            if(!obj){console.log("no obj data, or not ready"); return;}
+            const blob = new Blob([obj], {type: 'text/plain',oneTimeOnly: true });
+            const elem = window.document.createElement('a');
+            elem.href = window.URL.createObjectURL(blob);
+            elem.download = `${selection}.obj`;        
+            document.body.appendChild(elem);
+            elem.click();        
+            document.body.removeChild(elem);
+        }
+    }
+</script>
+</head>
+<body>
+    <br/>
+    <select id="selModel">
+	    <option value="a32">32 - gojulas giga</option>
+        <option value="a34">34 - areosaurer</option>
+        <option value="a40">40 - areosaurer</option>
+        <option value="a41">41 - brachiozilla </option>
+        <option value="a42">42 - gravity wolf</option>
+        <option value="a43">43 - gairyuki</option>
+        <option value="a44">44 - liger zero falcon</option>
+        <option value="a45">45 - boldguard</option>
+        <option value="a46">46 - storm sworder</option>
+        <option value="a47">47 - petras</option>
+        <option value="a48">48 - rayse tiger</option>
+        <option value="a49">49 - petras</option>
+        <option value="a50">50</option>
+        <option value="a98">98 - buster fury</option>
+    
+        <option value="b33">33 - zabat</option>
+        <option value="b34">34 - redler</option>
+        <option value="b35">35 - sinker</option>
+        <option value="b40">40 - gravity saix</option>
+        <option value="b41">41 - gravity saurer</option>
+        <option value="b42">42 - buster fury</option>
+        <option value="b43">43 - zabat</option>
+        <option value="b44">44 - decalto dragon</option>
+        <option value="b45">45 - brastle tiger</option>
+        <option value="c99">c99 - </option>
+        <option value="y99">y99 - </option>
+	
+	
+        <option value="a01">Cannon Tortoise</option>
+        <option value="a02">Gun Sniper</option>
+        <option value="a03">Shield Liger</option>
+        <option value="a04">Command Wolf</option>
+        <option value="a05">Dibison</option>
+        <option value="a06">Gojulas</option>
+        <option value="a07">Blade Liger</option>
+        <option value="a08">Shadow Fox</option>
+        <option value="a09">Liger Zero</option>
+        <option value="a10">Jager</option>
+        <option value="a11">Schneider</option>
+        <option value="a12">Panzer</option>
+        <option value="a13">X</option>
+        <option value="a14">Snipe Master</option>
+        <option value="a15">Konig Wolf</option>
+        <option value="a16">Gojulas Giga</option>
+        <option value="a17">Ultrasaurus</option>
+        <option value="a18">Mad Thunder</option>
+        <option value="a19">Pteras</option>
+        <option value="a20">Cyclops</option>
+        <option value="a21">Cyclops II</option>
+        <option value="a22">Trinity Liger</option>
+        <option value="a23">Blitz Tiger</option>
+        <option value="a24">Gojulas MKII</option>
+        <option value="a25">Matrix Dragon</option>
+        <option value="a26">Double arms lizard</option>
+        <option value="a27">Griffin</option>
+        <option value="a28">Liger Aero</option>
+        <option value="a29">Liger Zero Phoenix</option>
+        <option value="a30">Energy Liger</option>
+        <option value="a31">Hover Cargo</option>
+        <option value="a99">--</option>
+        <option value="b01">Molga</option>
+        <option value="b02">Zaber Fang</option>
+        <option value="b03">Red Horn</option>
+        <option value="b04">Elephander</option>
+        <option value="b05">Iron Kong</option>
+        <option value="b06">Lightning Saix</option>
+        <option value="b07">Berserk Fury</option>
+        <option value="b08">Genosaurer</option>
+        <option value="b09">Geno Breaker</option>
+        <option value="b10">Sinker</option>
+        <option value="b11">Helcat</option>
+        <option value="b12">Sturm Tyran</option>
+        <option value="b13">Dark Spiner</option>
+        <option value="b14">Chimera Dragon</option>
+        <option value="b15">Lord Gale</option>
+        <option value="b16">Geno Hydra</option>
+        <option value="b17">Death Saurer</option>
+        <option value="b18">Death Stinger</option>
+        <option value="b19">Diablo Tiger</option>
+        <option value="b20">Diablo Tiger B</option>
+        <option value="b21">Rev Raptor</option>
+        <option value="b22">Seismosaurus</option>
+        <option value="b23">Great Zaber</option>
+        <option value="b24">Dark Horn</option>
+        <option value="b25">Psycho Genosaurer</option>
+        <option value="b26">Iron Kong PK</option>
+        <option value="b27">Green Horn</option>
+        <option value="b28">Elephander</option>
+        <option value="b30">Gustav</option>
+        <option value="b31">-</option>
+    </select>
+    <input type="button" id="iptDownloadFile" value="download" style="display:none"/>
+    <br/>
+    <br/>
+    <canvas id="canvas" width="512" height="1024" style="display:none;"></canvas>
+    <div id="container"></div>
+    <br/>
+    <span style="font-family:sans-serif;font-size:12pt;">This project is for educational purposes only. <br/>
+        Code and related output is source available as: <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></span>
+    <br/>
+    <br/>
+</body>
+</html>
