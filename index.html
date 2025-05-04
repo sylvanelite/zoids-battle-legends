@@ -19,7 +19,7 @@
     import {TrackballControls} from "three/addons/controls/TrackballControls.js";
 
     //local
-    import {init} from "./build/src/loader.mjs";
+    import {init} from "./dist/src/loader.mjs";
     let selection = document.getElementById('selModel').value;
     if(window.location.hash){//load selection as URL fragment
         selection = window.location.hash.substring(1);
@@ -32,7 +32,7 @@
         window.location.reload();//very heavyweight way of doing this... 
     }
     document.getElementById('selModel').value = selection;
-	const fileName=`../dat/${selection}.dat`;//URL relative to the importer file
+	const fileName=`./dat/vs3/zoid/${selection}.dat`;//URL relative to the importer file
 	const obj = await init(fileName);
     
     //at this point parsing is done, rest is rendering via THREE.js
@@ -98,6 +98,34 @@
 <body>
     <br/>
     <select id="selModel">
+	    <option value="a32">32 - gojulas giga</option>
+        <option value="a34">34 - areosaurer</option>
+        <option value="a40">40 - areosaurer</option>
+        <option value="a41">41 - brachiozilla </option>
+        <option value="a42">42 - gravity wolf</option>
+        <option value="a43">43 - gairyuki</option>
+        <option value="a44">44 - liger zero falcon</option>
+        <option value="a45">45 - boldguard</option>
+        <option value="a46">46 - storm sworder</option>
+        <option value="a47">47 - petras</option>
+        <option value="a48">48 - rayse tiger</option>
+        <option value="a49">49 - petras</option>
+        <option value="a50">50</option>
+        <option value="a98">98 - buster fury</option>
+    
+        <option value="b33">33 - zabat</option>
+        <option value="b34">34 - redler</option>
+        <option value="b35">35 - sinker</option>
+        <option value="b40">40 - gravity saix</option>
+        <option value="b41">41 - gravity saurer</option>
+        <option value="b42">42 - buster fury</option>
+        <option value="b43">43 - zabat</option>
+        <option value="b44">44 - decalto dragon</option>
+        <option value="b45">45 - brastle tiger</option>
+        <option value="c99">c99 - </option>
+        <option value="y99">y99 - </option>
+	
+	
         <option value="a01">Cannon Tortoise</option>
         <option value="a02">Gun Sniper</option>
         <option value="a03">Shield Liger</option>
